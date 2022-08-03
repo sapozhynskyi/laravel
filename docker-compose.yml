@@ -1,0 +1,31 @@
+version: '3.8'
+
+volumes:
+    mysql2:
+        driver: local
+
+networks:
+    laravel:
+        driver: bridge
+services:
+    db:
+        image: "mysql:8.0"
+        ports:
+            - "3306:3306"
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: secret
+        volumes:
+            - mysql2:/var/lib/mysql2
+        networks:
+            - laravel
+    php:
+        build:
+            context: "./.docker/php"
+        ports:
+            - "8080:80"
+        restart: always
+        volumes:
+            -   .:/var/www/html
+        networks:
+            - laravel
