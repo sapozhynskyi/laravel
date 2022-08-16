@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Enums\RolesEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,9 +18,9 @@ class Role extends Model
         return $this->getRole($query);
     }
     public function scopeAdmin($query){
-        return $this->getRole($query, 'admin');
+        return $this->getRole($query, 'Admin');
     }
-    protected function getRole($query, $role = 'customer'){
-        return $query->where('name', '=', config('constants.db.roles.' . $role));
+    protected function getRole($query, $role = 'Customer'){
+        return $query->where('name', '=', RolesEnum::findByKey(ucfirst($role))->value);
     }
 }

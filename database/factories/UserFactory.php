@@ -54,4 +54,12 @@ class UserFactory extends Factory
             ];
         });
     }
+    public function withPassword(string $password)
+    {
+        return $this->state(function (array $attributes) use ($password) {
+            return [
+                'password' => Hash::make($password)
+            ];
+        });
+    }
 }

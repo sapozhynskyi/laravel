@@ -3,18 +3,23 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use Database\Seeders\RolesTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PasswordConfirmationTest extends TestCase
 {
     use RefreshDatabase;
+    protected function afterRefreshingDatabase()
+    {
+        $this->seed(RolesTableSeeder::class);
+    }
 
     public function test_confirm_password_screen_can_be_rendered()
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get('/confirm-password');
+        $response = $this->actingAs($user)->get(route('password.confirm'));
 
         $response->assertStatus(200);
     }
@@ -23,8 +28,8 @@ class PasswordConfirmationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('/confirm-password', [
-            'password' => 'password',
+        $response = $this->actingAs($user)->post('/password/confirm', [
+            'password' => 'qwerty12345',
         ]);
 
         $response->assertRedirect();
@@ -35,7 +40,7 @@ class PasswordConfirmationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('/confirm-password', [
+        $response = $this->actingAs($user)->post('/password/confirm', [
             'password' => 'wrong-password',
         ]);
 
