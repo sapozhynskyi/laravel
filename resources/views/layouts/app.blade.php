@@ -30,15 +30,22 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{route('products.index')}}">{{__('Products')}}</a> </li>
+                        <li class="nav-item"><a class="nav-link" href="{{route('categories.index')}}">{{__('Categories')}}</a> </li>
                         @auth
                             @if(Request::is('admin/*'))
                                 @include('navigations.admin_nav')
                             @endif
                         @endauth
                     </ul>
-
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('cart') }}">
+                                {{ __('Cart') }} @if(Cart::instance('cart')->count() > 0) -
+                                <strong>{{ Cart::instance('cart')->count() }}</strong> @endif
+                            </a>
+                        </li>
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
@@ -64,6 +71,19 @@
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
+                                    @auth
+                                        @if(Auth::user()->role_id == 1)
+                                    <a class="dropdown-item" href="{{ route('admin.dashboard') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('admin-form').submit();">
+                                        {{ __('Admin panel') }}
+                                    </a>
+                                        @endif
+                                    @endauth
+
+                                    <form id="admin-form" action="{{ route('admin.dashboard') }}" method="GET" class="d-none">
+                                        @csrf
+                                    </form>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
