@@ -24,6 +24,14 @@ class Product extends Model
         'SKU'
     ];
 
+    public function followers(){
+        return $this->belongsToMany(
+            User::class,
+            'wish_list',
+            'product_id',
+            'user_id'
+        );
+    }
     public function category()
     {
         return $this->belongsTo(Category::class);
