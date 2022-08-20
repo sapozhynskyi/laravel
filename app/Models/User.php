@@ -18,6 +18,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'balance',
         'name',
         'surname',
         'email',
@@ -46,5 +47,19 @@ class User extends Authenticatable
     ];
     public function role(){
         return $this->belongsTo(Role::class);
+    }
+    public function addToWish(Product $product){
+        $this->wishes()->attach($product);
+    }
+    public function removeFromWish(Product $product){
+        $this->wishes()->detach($product);
+    }
+    public function wishes(){
+        return $this->belongsToMany(
+            Product::class,
+            'wish_list',
+            'user_id',
+            'product_id'
+        );
     }
 }
