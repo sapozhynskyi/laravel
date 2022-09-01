@@ -30,8 +30,9 @@ class Order extends Model
     public function status(){
         return $this->belongsTo(OrderStatus::class);
     }
-    public function products(){
-        return $this->belongsToMany(Product::class)->with('quantity', 'single_price');
+    public function products()
+    {
+        return $this->belongsToMany(Product::class)->withPivot(['quantity', 'single_price']);
     }
     public function transaction(){
         return $this->belongsTo(Transaction::class);

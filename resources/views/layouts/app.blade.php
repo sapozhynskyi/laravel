@@ -33,6 +33,9 @@
                         <li class="nav-item"><a class="nav-link" href="{{route('products.index')}}">{{__('Products')}}</a> </li>
                         <li class="nav-item"><a class="nav-link" href="{{route('categories.index')}}">{{__('Categories')}}</a> </li>
                         @auth
+                            <li class="nav-item"><a class="nav-link" href="{{route('account.orders.index')}}">{{__('Orders')}}</a> </li>
+                        @endauth
+                        @auth
                             @if(Request::is('admin/*'))
                                 @include('navigations.admin_nav')
                             @endif
