@@ -1,4 +1,5 @@
 import './bootstrap';
+//import './iziToast';
 import $ from 'jquery';
 
 const headers = {
