@@ -12,116 +12,119 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
+    <link href="{{ asset('css/iziToast.css') }}" rel="stylesheet">
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/iziToast.css', 'resources/js/iziToast.js'])
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+<div id="app">
+    <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url('/') }}">
+                {{ config('app.name', 'Laravel') }}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Left Side Of Navbar -->
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="{{route('products.index')}}">{{__('Products')}}</a> </li>
+                    <li class="nav-item"><a class="nav-link" href="{{route('categories.index')}}">{{__('Categories')}}</a> </li>
+                    @auth
+                        <li class="nav-item"><a class="nav-link" href="{{route('account.orders.index')}}">{{__('Orders')}}</a> </li>
+                    @endauth
+                    @auth
+                        @if(Request::is('admin/*'))
+                            @include('navigations.admin_nav')
+                        @endif
+                    @endauth
+                </ul>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link" href="{{route('products.index')}}">{{__('Products')}}</a> </li>
-                        <li class="nav-item"><a class="nav-link" href="{{route('categories.index')}}">{{__('Categories')}}</a> </li>
-                        @auth
-                            <li class="nav-item"><a class="nav-link" href="{{route('account.orders.index')}}">{{__('Orders')}}</a> </li>
-                        @endauth
-                        @auth
-                            @if(Request::is('admin/*'))
-                                @include('navigations.admin_nav')
-                            @endif
-                        @endauth
-                    </ul>
-                    <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('cart') }}">
-                                {{ __('Cart') }} @if(Cart::instance('cart')->count() > 0) -
-                                <strong>{{ Cart::instance('cart')->count() }}</strong> @endif
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Left Side Of Navbar -->
+                <ul class="navbar-nav me-auto">
+                    @auth
+                        @if(Request::is('admin/*'))
+                            @include('navigations.admin_nav')
+                        @endif
+                    @endauth
+                </ul>
+
+                <!-- Right Side Of Navbar -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('cart') }}">
+                            {{ __('Cart') }} @if(Cart::instance('cart')->count() > 0) -
+                            <strong>{{ Cart::instance('cart')->count() }}</strong> @endif
+                        </a>
+                    </li>
+                    <!-- Authentication Links -->
+                    @guest
+                        @if (Route::has('login'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                            </li>
+                        @endif
+
+                        @if (Route::has('register'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            </li>
+                        @endif
+                    @else
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                {{ Auth::user()->name }}
                             </a>
-                        </li>
-                        <!-- Authentication Links -->
-                        @guest
-                            @if (Route::has('login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                            @endif
 
-                            @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('account.index') }}">
+                                    {{ __('Account') }}
+                                </a>
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                   onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                    {{ __('Logout') }}
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('account.index') }}">
-                                        {{ __('Account') }}
-                                    </a>
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-                                    @auth
-                                        @if(Auth::user()->role_id == 1)
-                                    <a class="dropdown-item" href="{{ route('admin.dashboard') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('admin-form').submit();">
-                                        {{ __('Admin panel') }}
-                                    </a>
-                                        @endif
-                                    @endauth
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </div>
+                        </li>
+                    @endguest
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-                                    <form id="admin-form" action="{{ route('admin.dashboard') }}" method="GET" class="d-none">
-                                        @csrf
-                                    </form>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
+    <main class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    @if(session('success'))
+                        @php
+                            notify()->success(session('success'))
+                        @endphp
+                    @endif
+                    @if(session('warn'))
+                        @php
+                            notify()->warning(session('warn'))
+                        @endphp
+                    @endif
                 </div>
             </div>
-        </nav>
-
-        <main class="py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        @if(session('success'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('success') }}
-                            </div>
-                        @endif
-                        @if(session('warn'))
-                            <div class="alert alert-danger" role="alert">
-                                {{ session('warn') }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @yield('content')
-        </main>
-    </div>
-    @stack('footer-scripts')
+        </div>
+        @yield('content')
+    </main>
+    <script src="{{ asset('js/iziToast.js') }}"></script>
+</div>
+@include('vendor.lara-izitoast.toast')
+@stack('footer-scripts')
 </body>
 </html>
+

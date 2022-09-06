@@ -16,6 +16,14 @@ use App\Services\ImagesService;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('invoice', function () {
+    $order = \App\Models\Order::all()->last();
+    $service = new \App\Services\InvoicesService();
+    $invoice = $service->generate($order);
+    $test = $invoice->save('public');
+    dd($test->url());
+});
+
 Route::delete(
     'ajax/images/{image}',
     \App\Http\Controllers\Ajax\RemoveImageController::class
@@ -55,6 +63,8 @@ Route::middleware('auth')->group(function() {
     Route::delete('wishlist/{product}/delete', [\App\Http\Controllers\WishListController::class,'delete'])->name('wishlist.delete');
     Route::get('checkout', \App\Http\Controllers\CheckoutController::class)->name('checkout');
     Route::post('order', \App\Http\Controllers\OrdersController::class)->name('order.create');
+    Route::get('/order/{order}/invoice', \App\Http\Controllers\Invoices\DownloadInvoiceController::class)
+        ->name('orders.generate.invoice');
 
     Route::name('account.')->prefix('account')->group(function (){
         Route::get('/', [\App\Http\Controllers\Account\UsersController::class, 'index'])->name('index');
